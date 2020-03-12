@@ -1,0 +1,9 @@
+'''
+输入5个同学的成绩，进行排序输出；进行添加新的数据操作
+'''
+score=[44,36,93,36,76]
+score.sort()
+print(score)
+score.append(66)
+score.insert(3,100)
+print(score)
