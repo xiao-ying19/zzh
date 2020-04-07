@@ -1,0 +1,5 @@
+Tom	admin	40bd001563085fc35165329ea1ff5c5ecbdbbeef	
+Jack	root	86cfe0ec0b660ed6057dea6b3ba777c70af4fd13	
+Alice	Git	50a1e1d78b624fe6b8bbde214a442d50a810331d	
+Bob	Workspace	a4e1a709d7382d26fdff035ccb6d87e2fb3181a2	
+John	Text	f5cf4b9ece2bd744bcb76fd8d809a3f98ccf2be4	
