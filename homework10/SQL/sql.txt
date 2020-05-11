@@ -1,0 +1,30 @@
+ #① 查询所有男生的姓名，年龄，所在班级名称：
+select name,age,cls_id from students where gender='男';
+
+#② 查询所有查询编号小于4或没被删除的学生；
+select*from students where id<4 or is_delete=0;
+
+#③ 查询姓黄并且“名”是一个字的学生；
+select * from students where name like '黄_';
+
+#④ 查询编号是1或3或8的学生
+select * from students where id=1 or id=3 or id=8;
+
+#⑤ 查询编号为3至8的学生
+select*from students where id between 3 and 8;
+
+#⑥ 查询未删除男生信息，按年龄降序
+select * from students where is_delete=0 order by age desc;
+
+#⑦  查询女生的总数
+select count(*) from students where gender='女';
+
+#⑧  查询学生的平均年龄
+select sum(age)/count(*) from students;
+
+#⑨ 分别统计性别为男/女的人年龄平均值
+select avg(age) from students where gender='男';
+select avg(age) from students where gender='女';
+
+#⑩ 按照性别来进行人员分组如下显示（group by + group_concat()）；
+select gender,group_concat(name) from students group by gender;
