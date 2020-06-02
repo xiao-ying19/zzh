@@ -1,0 +1,1772 @@
+def getTicket():
+    # put the ip address or dns of your apic-em controller in this url
+    url = "https://" + controller + "/api/v1/ticket"
+
+    #the username and password to access the APIC-EM Controller
+    payload = {"username":"usernae","password":"password"}
+
+    #Content type must be included in the header
+    header = {"content-type": "application/json"}
+
+    #Performs a POST on the specified url to get the service ticket
+    response= requests.post(url,data=json.dumps(payload), headers=header, verify=False)
+
+    #convert response to json format
+    r_json=response.json()
+
+    #parse the json to get the service ticket
+    ticket = r_json["response"]["serviceTicket"]
+
+    return ticket 
+
+def bindiff_export(self, sample, is_64_bit = True, timeout = None):
+        """
+        Load a sample into IDA Pro, perform autoanalysis and export a BinDiff database.
+        :param sample: The sample's path
+        :param is_64_bit: If the sample needs to be analyzed by the 64 bit version of IDA
+        :param timeout: Timeout for the analysis in seconds
+        :return: The file name of the exported bindiff database. The file needs
+        to be deleted by the caller. Returns None on error.
+        """
+
+        data_to_send = {
+            "timeout": timeout,
+            "is_64_bit": is_64_bit}
+        url = "%s/binexport" % next(self._urls)
+        log.debug("curl -XPOST --data '%s' '%s'", json.dumps(data_to_send), url)
+        response = requests.post(url, data = data_to_send, files = {os.path.basename(sample): open(sample, "rb")})
+        if response.status_code == 200:
+            handle, output = tempfile.mkstemp(suffix = ".BinExport")
+            with os.fdopen(handle, "wb") as f:
+                map(f.write, response.iter_content(1024))
+            return output
+        else:
+            log.error("Bindiff server responded with status code %d: %s", response.status_code, response.content)
+            return None 
+
+def answer_ponies(query_id, results, timed_out):
+    result = requests.post(
+        "https://api.telegram.org/bot{}/answerInlineQuery".format(settings.TELEGRAM_TOKEN),
+        headers={"Content-Type": "application/json"},
+        json={
+            'inline_query_id': query_id,
+            'cache_time': settings.CACHE_TIME if timed_out == 0 else settings.PARTIAL_RESULT_CACHE_TIME,
+            'is_personal': False,
+            'results': [
+                {
+                    'type': 'mpeg4_gif',
+                    'id': url,
+                    'mpeg4_url': url,
+                    'thumb_url': thumb,
+                    'mpeg4_width': dimensions[0],
+                    'mpeg4_height': dimensions[1],
+                } for url, thumb, id_number, dimensions in results
+            ]
+        })
+    print(result.content)
+    result.raise_for_status() 
+
+def processfile(inputfile, serverurl):
+    headers = {'content-type': 'application/json'}
+    try:
+        with open(inputfile) as json_file:
+
+            file_data = json_file.read()
+            file_data = file_data.replace("\n", "")
+
+            print(json.dumps(file_data, sort_keys=True, indent=4, separators=(',', ': ')))
+            try:
+                r = requests.post(serverurl, data=file_data, headers=headers, timeout=5)
+            except Exception as err:
+
+                print("COMMUNICATION ERROR : " + format(err))
+                sys.exit(2)
+    except Exception as err:
+        print("File ERROR : " + format(err))
+
+        return False
+
+    print (inputfile + " sent to " + serverurl + ". Status code: " + str(r.status_code) + ".")
+
+    return True 
+
+def sendNotification(url, msg):
+    """Send a notification using a Slack webhook URL. See https://api.slack.com/incoming-webhooks
+
+    Arguments:
+        url (string): Slack incoming webhook URL for sending the message.
+        msg (string): The message to be sent (can use markdown for formatting)
+    """
+    try:
+        res = requests.post(url, data=json.dumps(
+            {"text": msg, "mrkdwn": True}))
+        if res.status_code != 200:
+            print(f'Falied to send notification "{msg}" to "{url}"')
+            print('Response', res.content)
+            return False
+    except Exception as e:
+        print(f'Falied to send notification "{msg}" to "{url}"')
+        print(e)
+        return False
+    return True 
+
+def fj_login(name=USERNAME, password=PASSWORD, email_mode=False, _print=False):
+    ''' ([str, str, bool, bool]) -> dict
+    name: your username. If email_mode == True, your email address
+    password: your password
+    email_mode: whether name is your email or username
+    _print: debug
+
+    returns authentication information'''
+    
+    if email_mode:
+        url = 'https://account.freejamgames.com/api/authenticate/email/web'
+        body_json = {'EmailAddress':name, 'Password':password}
+        response = requests.post(url, json=body_json)
+    else:
+        url = 'https://account.freejamgames.com/api/authenticate/displayname/web'
+        body_json = {'DisplayName':name, 'Password':password}
+        response = requests.post(url, json=body_json)
+    if response.status_code != 200:
+        if _print:
+            print('FJ Auth returned error', response.status_code)
+    return response.json() 
+
+def pickle_export(self, sample, is_64_bit = True, timeout = None):
+        """
+        Load a sample into IDA Pro, perform autoanalysis and export a pickle file. 
+        :param sample: The sample's path
+        :param is_64_bit: If the sample needs to be analyzed by the 64 bit version of IDA
+        :param timeout: Timeout for the analysis in seconds
+        :return: The file name of the exported pickle database. The file needs
+        to be deleted by the caller. Returns None on error.
+        """
+
+        data_to_send = {
+            "timeout": timeout,
+            "is_64_bit": is_64_bit}
+        url = "%s/pickle" % next(self._urls)
+        log.debug("curl -XPOST --data '%s' '%s'", json.dumps(data_to_send), url)
+        response = requests.post(url, data = data_to_send, files = {os.path.basename(sample): open(sample, "rb")})
+        if response.status_code == 200:
+            handle, output = tempfile.mkstemp(suffix = ".pickle")
+            with os.fdopen(handle, "wb") as f:
+                map(f.write, response.iter_content(1024))
+            return output
+        else:
+            log.error("Bindiff server responded with status code %d: %s", response.status_code, response.content)
+            return None 
+
+def apply_configuration():
+    applyConfigurationResponse = requests.post(applyConfigurationURI, 
+        headers={
+            'Authorization': iotHubSasToken,
+            'Content-Type': 'application/json'
+        },
+        data = get_config_file_contents()
+    )
+
+    print(applyConfigurationURI)
+    print(applyConfigurationResponse.status_code)
+    print(applyConfigurationResponse.text)
+
+    if applyConfigurationResponse.status_code == 204:
+        print("Configuration successfully applied.  Please run `docker logs edgeAgent -f` to see the change applied.")
+    else:
+        print("There was an error applying the configuration. You should see an error message above that indicates the issue.") 
+
+def convert_to_mp4(url):
+    cached = check_pony_cache(url)
+    if cached is not None:
+        return cached
+    print("Converting {} to mp4...".format(url))
+    result = requests.post("https://api.imgur.com/3/image", {
+        "image": url,
+        "type": "URL"
+    }, headers={
+        'Authorization': 'Client-ID {}'.format(settings.IMGUR_TOKEN),
+        'Content-Type': 'application/x-www-form-urlencoded',
+    })
+    try:
+        result.raise_for_status()
+    except requests.HTTPError as e:
+        print(e.response.content)
+        return None
+    mp4_url = result.json()['data'].get('mp4', None)
+    if mp4_url is not None:
+        cache_pony(url, mp4_url)
+    return mp4_url 
+
+def sendToCityIO(data, endpoint=-1, token=None):
+    config = get_config()
+    if endpoint == -1 or endpoint == None:
+        post_address = config['CITY_SCOPE']['TABLE_URL_RESULT_POST'] # default endpoint
+    else:
+        post_address = json.loads(config['CITY_SCOPE']['TABLE_URL_RESULT_POST_LIST'])[endpoint] # user endpoint
+
+    if token is None:
+        r = requests.post(post_address, json=data, headers={'Content-Type': 'application/json'})
+    else: # with authentication
+        r = requests.post(post_address, json=data, headers={'Content-Type': 'application/json', 'Authorization': 'Bearer '+token})
+    print(r)
+    if not r.status_code == 200:
+        print("could not post result to cityIO", post_address)
+        print("Error code", r.status_code)
+    else:
+        print("Successfully posted to cityIO", post_address, r.status_code)
+
+# checks for updates on the cityIO grid
+# If the grid changes the city-scope parser is called to create a new buildings.json
+# The noise calculation is triggered 
+
+def __card_login(self):
+        card_url = 'https://pass.neu.edu.cn/tpass/login?service=http://ecard.neu.edu.cn/selflogin/login.aspx'
+        response = requests.get(card_url, cookies=self.pass_cookies, proxies=proxies['index'])
+
+        data = {
+            'username': re.findall("<input type=hidden name='username' id='username' value='(.*?)'/>", response.text)[
+                0],
+            'timestamp':
+                re.findall("<input type=hidden name='timestamp' id='timestamp' value='(.*?)'/>", response.text)[0],
+            'auid': re.findall("<input type=hidden name='auid' id='auid' value='(.*?)'/>", response.text)[0]
+        }
+
+        get_session = requests.post('http://ecard.neu.edu.cn/selfsearch/SSOLogin.aspx',
+                                    cookies=response.cookies,
+                                    data=data,
+                                    headers=self.__headers,
+                                    proxies=proxies['card'])
+
+        self.card_cookies = {
+            '.ASPXAUTSSM': get_session.history[0].cookies['.ASPXAUTSSM'],
+            'ASP.NET_SessionId': response.cookies['ASP.NET_SessionId']
+        }
+
+    # 通过一网通办登陆教务处，私有方法 
+
+def borrow_info(self):
+        post_url = 'https://portal.neu.edu.cn/tp_up/up/subgroup/getLibraryInfo'
+        my_headers = {
+            'Referer': 'https://portal.neu.edu.cn/tp_up/view?m=up',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36',
+            'Origin': 'https://portal.neu.edu.cn',
+            'Content-Type': 'application/json;charset=UTF-8'
+        }
+        response = requests.post(post_url,
+                                headers=my_headers,
+                                cookies=self.index_cookies,
+                                data='{}',
+                                proxies=proxies['index'])
+        return response.json()
+
+
+    # 卡是否挂失 
+
+def _get_song_lyrics(self, song):
+        lyric_url = "https://music.163.com/weapi/song/lyric"
+        raw_data = {
+            "csrf_token": "",
+            "id": song.id,
+            "lv": -1,
+            "tv": -1
+        }
+        post_data = get_encrypted_post_data(raw_data)
+        r = requests.post(lyric_url, data=post_data, headers=self.headers)
+        json_data = r.json()
+
+        lyric = ""
+        if "lrc" in json_data and "lyric" in json_data["lrc"]:
+            lyric = json_data["lrc"]["lyric"]
+
+        return lyric 
+
+def new_post(self, text):
+
+        header = {
+            "Content-Type": "application/json",
+            "User-Agent" : self.UA,
+            "X-Line-Mid" : self.mid,
+            "x-lct" : self.channel_access_token,
+        }
+
+        payload = {
+            "postInfo" : { "readPermission" : { "type" : "ALL" } },
+            "sourceType" : "TIMELINE",
+            "contents" : { "text" : text }
+        }
+
+        r = requests.post(
+            "http://" + self.host + "/mh/api/v24/post/create.json",
+            headers = header,
+            data = json.dumps(payload)
+        )
+
+        return r.json() 
+
+def postPhoto(self,text,path):
+        header = {
+            "Content-Type": "application/json",
+            "User-Agent" : self.UA,
+            "X-Line-Mid" : self.mid,
+            "x-lct" : self.channel_access_token,
+        }
+
+        payload = {
+            "postInfo" : { "readPermission" : { "type" : "ALL" } },
+            "sourceType" : "TIMELINE",
+            "contents" : { "text" : text ,"media" :  [{u'objectId': u'F57144CF9ECC4AD2E162E68554D1A8BD1a1ab0t04ff07f6'}]}
+        }
+        r = requests.post(
+            "http://" + self.host + "/mh/api/v24/post/create.json",
+            headers = header,
+            data = json.dumps(payload)
+        )
+
+        return r.json() 
+
+def like(self, mid, postid, likeType=1001):
+
+        header = {
+            "Content-Type" : "application/json",
+            "X-Line-Mid" : self.mid,
+            "x-lct" : self.channel_access_token,
+        }
+
+        payload = {
+            "likeType" : likeType,
+            "activityExternalId" : postid,
+            "actorId" : mid
+        }
+
+        r = requests.post(
+            "http://" + self.host + "/mh/api/v23/like/create.json?homeId=" + mid,
+            headers = header,
+            data = json.dumps(payload)
+        )
+
+        return r.json() 
+
+def comment(self, mid, postid, text):
+        header = {
+            "Content-Type" : "application/json",
+            "X-Line-Mid" : self.mid,
+            "x-lct" : self.channel_access_token,
+        }
+
+        payload = {
+            "commentText" : text,
+            "activityExternalId" : postid,
+            "actorId" : mid
+        }
+
+        r = requests.post(
+            "http://" + self.host + "/mh/api/v23/comment/create.json?homeId=" + mid,
+            headers = header,
+            data = json.dumps(payload)
+        )
+
+        return r.json() 
+
+def createAlbum(self,gid,name):
+        header = {
+                    "Content-Type": "application/json",
+                    "User-Agent" : self.UA,
+                    "X-Line-Mid" : self.mid,
+                    "x-lct" : self.channel_access_token,
+        }
+        payload = {
+                "type" : "image",
+                "title" : name
+        }
+        r = requests.post(
+            "http://" + self.host + "/mh/album/v3/album?count=1&auto=0&homeId=" + gid,
+            headers = header,
+            data = json.dumps(payload)
+        )
+        return r.json() 
+
+def querylanguage(auth):
+    """Query user's language that's available on v2c."""
+    default = 'en'
+
+    r = requests.post(
+        url=api_url.replace('index.php', 'api.php'),
+        data={
+            'action': 'query',
+            'format': 'json',
+            'meta': 'userinfo',
+            'uiprop': 'options'
+        },
+        auth=auth
+    )
+
+    try:
+        language = r.json()['query']['userinfo']['options']['language']
+    except (NameError, KeyError):
+        return default
+
+    if not language:
+        return default
+
+    return language 
+
+def configAuthenticate(username, password):
+	FACTORIOPATH = getFactorioPath()
+
+	url = "https://auth.factorio.com/api-login"
+	params = {'username': username, 'password': password, 'apiVersion': 2}
+
+
+	if not os.path.isfile("%s/bin/x64/factorio" % (FACTORIOPATH) ):
+		print("Could not find factorio at %s" % (FACTORIOPATH))
+		sys.exit(1)
+
+
+	print("Fetching token for %s" %  (username))
+	myResponse = requests.post(url,data=params, verify=True)
+	if(myResponse.ok):
+
+	    jData = json.loads(myResponse.text)
+	    print("Writing %s to settings.json" % (jData[0]))
+	    
+	else:
+	  # If response code is not ok (200), print the resulting http error code with description
+	    myResponse.raise_for_status()
+	    sys.exit(1)
+	
+
+	try:
+		with codecs.open(getSettingsFile(), 'r', encoding='utf-8') as settings_file:
+			settingsJson = json.load(settings_file)
+			settingsJson['token'] = jData[0]
+			settingsJson['username'] = username
+				
+
+
+		with codecs.open("%s/config/settings.json" % (FACTORIOPATH), 'w', encoding='utf-8') as settings_file:
+			json.dump(settingsJson, settings_file, indent=4)
+	except Exception as e:
+		print(e)
+		print("Help! Can't deal with the settings file!") 
+
+def get_melting_temp(dna_sequence, oligo_concentration_uM,
+                     pcr_settings='q5'):
+    global IDT_COOKIE
+    
+    #@TODO: update this to use http://tmcalculator.neb.com/#!/ since its probably accounting for the salt concentration in the buffer
+    
+    if not IDT_COOKIE:
+        r = requests.get('http://www.idtdna.com/calc/analyzer',allow_redirects=False)
+        IDT_COOKIE = r.cookies['ASP.NET_SessionId']       
+        
+    headers = {"content-type":'application/json','Cookie':'ASP.NET_SessionId=%s'%IDT_COOKIE}
+    
+    idt_response = requests.post('https://www.idtdna.com/calc/analyzer/home/analyze',json={
+        "settings": {
+            "Sequence": dna_sequence,
+            "NaConc": 0,
+            "MgConc": 2,
+            "DNTPsConc": 5, 
+            "OligoConc": oligo_concentration_uM,
+            "NucleotideType": "DNA"
+        }
+    }, verify=False
+    ,headers=headers)    
+    
+    idt_response.raise_for_status()
+    
+    return idt_response.json()['MeltTemp'] 
+
+def post(self, *args, **kwargs):
+        kwargs['method'] = 'post'
+        return self.do(*args, **kwargs) 
+
+def _get_token(self):
+        response = requests.post(self.AUTH_URL, data={'grant_type': 'client_credentials'}, auth=(self.id, self.secret))
+        response.raise_for_status()
+        return response.json()['access_token'] 
+
+def nli(self, text, cusid=None):
+        response = requests.post(self.URL, params=self._gen_parameters('nli', text, cusid))
+        response.raise_for_status()
+        response_json = response.json()
+        if response_json['status'] != 'ok':
+            raise NliStatusError("NLI responded status != 'ok': {}".format(response_json['status']))
+        else:
+            nli_obj = response_json['data']['nli'][0]
+            return self.intent_detection(nli_obj) 
+
+def _isAsthamaPump(self, imageWidth, imageHeight, imageString):
+        result = {}
+        coordinates = {}
+        metadata = {}
+        isPresent = False
+
+        try :
+            self._printLogs("Sending Image To DL Server...", "NORMAL")
+
+            url = DL_SERVER_URL
+            payload = {
+                        "imageWidth"   : imageWidth,
+                        "imageHeight"  : imageHeight,
+                        "image_string" : base64.b64encode(imageString),
+                        "imageID"      : self.imageNo2d
+                        }
+            headers = {'content-type': 'application/json'}
+
+            res = requests.post(url, data=json.dumps(payload), headers=headers)
+            result = res.json()
+            self._printLogs("[*] Sent to  : " + str(url), "OKBLUE")
+            self._printLogs("[*] Response : " + str(result), "OKBLUE")
+
+        except Exception, err:
+            self._printLogs("Error Found on connecting to server : " + str(err), "FAIL")
+            self._printLogs("+", "LINE") 
+
+def get_token( client_id, secret ) :
+    """Gets Authorizaton token to use in other requests."""
+    auth_url  = 'https://auth-api.lexisnexis.com/oauth/v2/token'
+    payload   = ( 'grant_type=client_credentials&scope=http%3a%2f%2f' 'oauth.lexisnexis.com%2fall' )
+    headers   = { 'Content-Type': 'application/x-www-form-urlencoded' }
+    r         = requests.post( auth_url, auth=HTTPBasicAuth( client_id, secret ), headers=headers, data=payload )
+    json_data = r.json()
+    return json_data[ 'access_token' ] 
+
+def get_token( client_id, secret ) :
+    """Gets Authorizaton token to use in other requests."""
+    auth_url  = 'https://auth-api.lexisnexis.com/oauth/v2/token'
+    payload   = ( 'grant_type=client_credentials&scope=http%3a%2f%2f' 'oauth.lexisnexis.com%2fall' )
+    headers   = { 'Content-Type': 'application/x-www-form-urlencoded' }
+    r         = requests.post( auth_url, auth=HTTPBasicAuth( client_id, secret ), headers=headers, data=payload )
+    json_data = r.json()
+    return json_data[ 'access_token' ] 
+
+def execute(self, document, variable_values=None, timeout=None):
+        query_str = print_ast(document)
+        payload = {
+            'query': query_str,
+            'variables': variable_values or {}
+        }
+
+        data_key = 'json' if self.use_json else 'data'
+        post_args = {
+            'headers': self.headers,
+            'auth': self.auth,
+            'cookies': self.cookies,
+            'timeout': timeout or self.default_timeout,
+            data_key: payload
+        }
+        request = requests.post(self.url, **post_args)
+        request.raise_for_status()
+
+        result = request.json()
+        assert 'errors' in result or 'data' in result, 'Received non-compatible response "{}"'.format(result)
+        return ExecutionResult(
+            errors=result.get('errors'),
+            data=result.get('data')
+        ) 
+
+def main():
+    module = AnsibleModule(
+      argument_spec = dict(
+        host = dict(required=True),
+        username = dict(required=True),
+        password = dict(required=True)
+      )
+    )
+    
+    device = module.params.get('host')
+    username = module.params.get('username')
+    password = module.params.get('password')
+
+    url='http://' + host + '/ins'
+    switchuser=username
+    switchpassword=password
+
+    myheaders={'content-type':'application/json-rpc'}
+    
+    payload=[
+      {
+        "jsonrpc": "2.0",
+        "method": "cli",
+        "params": {
+          "cmd": "show version",
+          "version": 1.2
+        },
+        "id": 1
+      }
+    ]
+    response = requests.post(url,data=json.dumps(payload), headers=myheaders,auth=(switchuser,switchpassword)).json()
+
+    version = response['result']['body']['sys_ver_str']
+    data = json.dumps({"version": version})
+    module.exit_json(changed=False, msg=str(data)) 
+
+def add(self, db, **kwargs):
+        db_data = db.data.copy()
+        db_data["functions"] = _filter_functions(db.data["functions"], **kwargs)
+        data = pickle.dumps(db_data)
+        result = requests.post("{:s}/function".format(self.url), files = {"file": BytesIO(data)})
+        if result.status_code != 200:
+            raise RuntimeError("Request failed with status code {:d}".format(result.status_code)) 
+
+def find_raw(self, db, **kwargs):
+        db_data = db.data.copy()
+        db_data["functions"] = _filter_functions(db.data["functions"], **kwargs)
+        data = pickle.dumps(db_data)
+        result = requests.post("{:s}/function/find/raw".format(self.url), files = {"file": BytesIO(data)})
+        if result.status_code == 200:
+            return True
+        elif result.status_code == 404:
+            return False
+        else:
+            raise RuntimeError("Request failed with status code {:d}".format(result.status_code)) 
+
+def find_mnem(self, db, **kwargs):
+        db_data = db.data.copy()
+        db_data["functions"] = _filter_functions(db.data["functions"], **kwargs)
+        data = pickle.dumps(db_data)
+        result = requests.post("{:s}/function/find/mnem".format(self.url), files = {"file": BytesIO(data)})
+        if result.status_code == 200:
+            return True
+        elif result.status_code == 404:
+            return False
+        else:
+            raise RuntimeError("Request failed with status code {:d}".format(result.status_code)) 
+
+def main(args, env):
+    response = requests.post("{:s}/whitelist".format(args.url), files = {"file": open(args.sample, "rb")})
+    if response.status_code != 200:
+        print("Server returned error {:d}: {:s}".format(response.status_code, response.content)) 
+
+def add_sample(self, paths):
+        if isinstance(paths, str):
+            paths = [paths]
+        reply = requests.post("%s/job/%d/add_sample" % (self.url, self.id), files = [(path, open(path, "rb")) for path in paths[0].split(",")])
+        if reply.status_code != 200:
+            try:
+                message = reply.json()["message"]
+            except ValueError:
+                message = reply.content
+            raise RuntimeError("Server returned error code %d: %s" % (reply.status_code, message)) 
+
+def submit(self):
+        reply = requests.post("%s/job/%d/submit" % (self.url, self.id))
+        if reply.status_code != 200:
+            try:
+                message = reply.json()["message"]
+            except ValueError:
+                message = reply.content
+            raise RuntimeError("Server returned error code %d: %s" % (reply.status_code, message)) 
+
+def create_job(self):
+        reply = requests.post("%s/job" % self.url)
+        if reply.status_code == 200:
+            return Job(self.url, reply.json()["job"])
+        else:
+            try:
+                message = reply.json()["message"]
+            except ValueError:
+                message = reply.content
+            raise RuntimeError("Server returned error code %d: %s" % (reply.status_code, message)) 
+
+def find_station(self, search_term):
+
+        LOG.debug("pre-alias search_term: " + search_term);
+        search_term = self.apply_aliases(search_term)
+        LOG.debug("aliased search_term: " + search_term);
+
+        payload = { "query" : search_term }
+        # get the response from the TuneIn API
+        res = requests.post(base_url, data=payload, headers=headers)
+        dom = parseString(res.text)
+        # results are each in their own <outline> tag as defined by OPML (https://en.wikipedia.org/wiki/OPML)
+        entries = dom.getElementsByTagName("outline")
+
+        # Loop through outlines in the lists
+        for entry in entries:
+            # Only look at outlines that are of type=audio and item=station
+            if (entry.getAttribute("type") == "audio") and (entry.getAttribute("item") == "station"):
+                if (entry.getAttribute("key") != "unavailable"):
+                    # stop the current stream if we have one running
+                    if (self.audio_state == "playing"):
+                        self.stop()
+                    # Ignore entries that are marked as unavailable
+                    self.mpeg_url = entry.getAttribute("URL")
+                    self.station_name = entry.getAttribute("text")
+                    # this URL will return audio/x-mpegurl data. This is just a list of URLs to the real streams
+                    self.stream_url = self.get_stream_url(self.mpeg_url)
+                    self.audio_state = "playing"
+                    self.speak_dialog("now.playing", {"station": self.station_name} )
+                    wait_while_speaking()
+                    LOG.debug("Found stream URL: " + self.stream_url)
+                    self.process = play_mp3(self.stream_url)
+                    return
+
+        # We didn't find any playable stations
+        self.speak_dialog("not.found")
+        wait_while_speaking()
+        LOG.debug("Could not find a station with the query term: " + search_term) 
+
+def callback(request):
+    body = json.loads(request.body)
+    text = body['message']['text'].split(' ')
+    token = None
+    if len(text) > 1:
+        token = text[1]
+
+    bot_key = os.environ.get('TELEGRAM_API_KEY')
+    chat_id = body['message']['chat']['id']
+
+    try:
+        notification = Notification.objects.get(channel='telegram', connect_token=token)
+        notification.channel_id = chat_id
+        notification.save()
+
+        text = "Welcome to the MuN"
+        send_message_url = f'https://api.telegram.org/bot{bot_key}/sendMessage?chat_id={chat_id}&text={text}'
+        requests.post(send_message_url)
+
+        return HttpResponse()
+    except Notification.DoesNotExist:
+        text = "Sorry, seems like the MuN is too far..."
+        send_message_url = f'https://api.telegram.org/bot{bot_key}/sendMessage?chat_id={chat_id}&text={text}'
+        requests.post(send_message_url)
+
+        return HttpResponse() 
+
+def _client_wrapper(self, rpc_name, rpc_signature):
+        def _rpc_call(*args, **kargs):
+            for k,v in zip(rpc_signature.parameters, args):
+                 kargs[k] = v
+            res = requests.post("http://%s:%s/%s" % (self.ip, self.port, rpc_name), params=kargs)
+            return res.json() if res.status_code == 200 else None
+        return _rpc_call 
+
+def get_token_from_code(auth_code, redirect_uri):
+    # Build the post form for the token request
+    post_data = {'grant_type': 'authorization_code',
+                 'code': auth_code,
+                 'redirect_uri': redirect_uri,
+                 'scope': ' '.join(str(i) for i in scopes),
+                 'client_id': client_id,
+                 'client_secret': client_secret}
+
+    r = requests.post(token_url, data=post_data)
+    try:
+        return r.json()
+    except:
+        return 'Error retrieving token: {0} - {1}'.format(r.status_code, r.text) 
+
+def jenkins_post(url, config_xml):
+
+    try:
+
+        log.info('Posting data to jenkins: %s' % url)
+        headers = {'Content-Type': 'text/xml'}
+        auth = HTTPBasicAuth(jenkins_user, jenkins_pass)
+        r = requests.post(url, verify=False, headers=headers, auth=auth, data=config_xml)
+    
+        if r.status_code == requests.codes.ok:
+            log.info('Success: %s' % r.status_code)
+            return r
+        else:
+            msg = 'There was an error posting to Jenkins: http_status_code={0}s,reason={1},request={2}'.format(r.status_code, r.reason, url)
+            log.error(msg)
+            raise Exception(msg)
+
+    except Exception, e:
+        msg = 'Failed to create jenkins conf job: {0}'.format(e)
+        log.error(msg)
+        raise Exception(msg) 
+
+def send(self, msg):
+        payload = msg
+        r = requests.post(self.url, data=json.dumps(payload))
+
+        if (r.status_code == requests.codes.ok):
+            print "FlowMod Succeeded - "+str(r.status_code)
+        else:
+            print "FlowMod Failed - "+str(r.status_code) 
+
+def demo__custom_identity_verify(identity_dict):
+    """
+    For CC98 identity verify
+
+    :type identity_dict: dict
+    """
+    import hashlib
+    import requests
+    import config
+
+    if 'cc98_username' not in identity_dict or 'cc98_password' not in identity_dict:
+        return False
+
+    try:
+        pass_md5 = hashlib.md5()
+        pass_md5.update(identity_dict['cc98_password'].encode())
+        pass_md5 = pass_md5.hexdigest()
+        if config.is_use_proxy:
+            proxy = config.requests_proxies
+        else:
+            proxy = None
+        r = requests.post('http://www.cc98.org/sign.asp', data={
+            'a': 'i',
+            'u': identity_dict['cc98_username'],
+            'p': pass_md5,
+            'userhidden': 2
+        }, proxies=proxy)
+        if r.text == '9898':
+            return True
+        else:
+            return False
+    except:
+        return False
+
+
+# Demo for Twitter 
+
+def test_decision_tree(self):
+        from requests import post
+        from os import system
+        from pandas import DataFrame, read_json
+        from sklearn.datasets import load_iris
+        from sklearn.tree import DecisionTreeClassifier
+
+        iris = load_iris()
+        input_df = DataFrame(data=iris['data'], columns=iris['feature_names'])
+        clf = DecisionTreeClassifier(max_depth=2)
+        clf.fit(input_df.values, iris['target'])
+
+        # convert classifier to Docker container
+        from sklearn2docker.constructor import Sklearn2Docker
+        s2d = Sklearn2Docker(
+            classifier=clf,
+            feature_names=iris['feature_names'],
+            class_names=iris['target_names'].tolist(),
+        )
+        s2d.save(
+            name="classifier",
+            tag="iris",
+        )
+
+        # run your Docker container as a detached process
+        system("docker run -d -p {}:5000 --name {} classifier:iris && sleep 5".format(self.port, self.container_name))
+
+        # send your training data as a json string
+        request = post("http://localhost:{}/predict/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(list(result), ['prediction'])
+        self.assertGreater(len(result), 0)
+
+        request = post("http://localhost:{}/predict_proba/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(list(result), ['setosa', 'versicolor', 'virginica'])
+        self.assertGreater(len(result), 0) 
+
+def test_barebones_keras(self):
+        from sklearn.datasets import load_iris
+        from pandas import DataFrame
+        from numpy import array
+        from os import system
+        from pandas import read_json
+        from requests import post
+
+        iris = load_iris()
+        input_df = DataFrame(data=iris['data'], columns=iris['feature_names'])
+        model = self.create_categorical_classification_model()
+        X, Y = input_df.values, array(iris['target'])
+        model.fit(X, Y)
+
+        # convert classifier to Docker container
+        from sklearn2docker.constructor import Sklearn2Docker
+        s2d = Sklearn2Docker(
+            classifier=model,
+            feature_names=list(input_df),
+            class_names=iris['target_names'].tolist(),
+        )
+        s2d.save(
+            name="classifier",
+            tag="keras",
+        )
+
+        # # run your Docker container as a detached process
+        system("docker run -d -p {}:5000 --name {} classifier:keras && sleep 5".format(self.port, self.container_name))
+
+        # send your training data as a json string
+        request = post("http://localhost:{}/predict/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(len(list(result)), 1)
+        self.assertEqual(len(result), len(input_df))
+
+        request = post("http://localhost:{}/predict_proba/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(len(list(result)), 3)
+        self.assertEqual(len(result), len(input_df)) 
+
+def _post(self):
+        if self.data_type == "json":
+            return requests.post(self.config['url'], json=self.data, headers=self.headers, timeout=10, proxies=self.proxy)
+        elif self.data_type == "urlencoded":
+            return requests.post(self.config['url'], data=self.data, headers=self.headers, timeout=10, proxies=self.proxy) 
+
+def track(self, page):
+        url = 'https://ssl.google-analytics.com/collect'
+        payload = {
+            'v': 1,
+            'tid': 'UA-23742434-4',
+            'cid': self._get_visitorid(),
+            't': 'screenview',
+            'an': 'Lynda.com Kodi Addon',
+            'av': self.version,
+            'cd': page
+        }
+
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:11.0) Gecko/20100101 Firefox/11.0'}
+        r = requests.post(url, data=payload, headers=headers) 
+
+def __index_login(self):
+        login_page = requests.get('https://pass.neu.edu.cn/tpass/login', proxies=proxies['index'])
+        # 生成登录参数
+        lt = re.findall("input type=\"hidden\" id=\"lt\" name=\"lt\" value=\"(.*?)\" />", login_page.text)[0]
+        execution = re.findall("input type=\"hidden\" name=\"execution\" value=\"(.*?)\" />", login_page.text)[0]
+        rsa = self.id + self.password + lt
+        ul = len(self.id)
+        pl = len(self.password)
+
+        # JESESSIONID是一个必不可少的cookie
+        self.pass_cookies['jsessionid_tpass'] = login_page.cookies['jsessionid_tpass']
+
+        post_data = {
+            'rsa': rsa,
+            'ul': ul,
+            'pl': pl,
+            'lt': lt,
+            'execution': execution,
+            '_eventId': 'submit'
+        }
+
+        login_post = requests.post('https://pass.neu.edu.cn/tpass/login',
+                                   headers=self.__headers,
+                                   cookies=login_page.cookies,
+                                   proxies=proxies['index'],
+                                   data=post_data)
+        for i in login_post.history:
+            if 'CASTGC' in i.cookies:
+                self.pass_cookies['CASTGC'] = i.cookies['CASTGC']
+            if 'tp_up' in i.cookies:
+                self.index_cookies = i.cookies
+                self.success = True
+
+    # 通过一网通办登录图书馆，私有方法 
+
+def card_info(self):
+        res = requests.post('https://portal.neu.edu.cn/tp_up/up/subgroup/getCardMoney',
+                            cookies=self.index_cookies,
+                            headers=self.__headers,
+                            data='{}',
+                            proxies=proxies['index'])
+        return res.json()
+
+    # 校园网使用情况 
+
+def net_info(self):
+        res = requests.post('https://portal.neu.edu.cn/tp_up/up/subgroup/getWlzzList',
+                            cookies=self.index_cookies,
+                            headers=self.__headers,
+                            data='{}',
+                            proxies=proxies['index'])
+        return res.json()
+
+    # 学生邮箱情况 
+
+def email_info(self):
+        res = requests.post('https://portal.neu.edu.cn/tp_up/up/subgroup/getBindEmailInfo',
+                            cookies=self.index_cookies,
+                            headers=self.__headers,
+                            data='{}',
+                            proxies=proxies['index'])
+        return res.json()
+
+    # 获取报销情况 
+
+def mobile_info(self):
+        post_url = 'https://portal.neu.edu.cn/tp_up/sys/uacm/profile/getMobileEmail'
+        my_headers = {
+            'Referer': 'https://portal.neu.edu.cn/tp_up/view?m=up',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36',
+            'Origin': 'https://portal.neu.edu.cn',
+            'Content-Type': 'application/json;charset=UTF-8'
+        }
+        response = requests.post(post_url,
+                                 headers=my_headers,
+                                 cookies=self.index_cookies,
+                                 data='{}',
+                                 proxies=proxies['index'])
+        return response.json() 
+
+def get_course(self, school_year, semester):
+        data = requests.post("https://portal.neu.edu.cn/tp_up/up/widgets/getClassbyUserInfo",
+                            cookies=self.index_cookies,
+                            headers={
+                                'Accept':'application/json, text/javascript, */*; q=0.01',
+                                'Content-Type': 'application/json;charset=UTF-8'
+                            },
+                            proxies=proxies['index'],
+                            data='{"schoolYear":"%s","semester":"%s","learnWeek":"1"}'%(school_year,semester)).json()
+        courses = []
+        for i in range(len(data)):
+            if data[i]['KKXND']!=school_year or data[i]['KKXQM']!=semester:
+                continue
+            not_have = True
+            for j in courses:
+                if j['name'] == data[i]['KCMC']:
+                    is_have = False
+                    if data[i]['JSXM'] not in j['teachers']:
+                        j['teachers'].append(data[i]['JSXM'])
+                    j['schedules'].append({
+                        "weeks": self.__week_num(data[i]['SKZC']),
+                        "day": int(data[i]['SKXQ']),
+                        "section": [ section for section in range(int(data[i]['KKXQM']),  1+int(data[i]['KKXQM'])+int(data[i]['SKJC']))],
+                        "classroom": data[i]['JXDD']
+                    })
+                    continue
+            if not_have:
+                courses.append({
+                    "name": data[i]['KCMC'],
+                    "teachers": [data[i]['JSXM']],
+                    "schedules": [{
+                        "weeks": self.__week_num(data[i]['SKZC']),
+                        "day": int(data[i]['SKXQ']),
+                        "section": [ section for section in range(int(data[i]['KKXQM']),  1+int(data[i]['KKXQM'])+int(data[i]['SKJC']))],
+                        "classroom": data[i]['JXDD']
+                    }]
+                })
+        return courses
+
+    # 通过教务处获取课表以及课程信息，如果教务处限制外网访问将无法在外网使用，建议使用get_course 
+
+def lost_card(self, card_pwd, human_id):
+        lost_page = requests.get('http://ecard.neu.edu.cn/selfsearch/User/UserLoss.aspx',
+                                 cookies=self.card_cookies, headers=self.__headers)
+        data = {
+            '__VIEWSTATE': re.findall('id="__VIEWSTATE" value="(.*?)"', lost_page.text)[0],
+            '__EVENTVALIDATION': re.findall('id="__EVENTVALIDATION" value="(.*?)"', lost_page.text)[0],
+            'ctl00$ContentPlaceHolder1$txtPwd': card_pwd,
+            'ctl00$ContentPlaceHolder1$txtIDcardNo': human_id,
+            'ctl00$ContentPlaceHolder1$btnLoss': '挂  失'
+        }
+        response = requests.post('http://ecard.neu.edu.cn/selfsearch/User/UserLoss.aspx',
+                                 data=data,
+                                 cookies=self.card_cookies,
+                                 headers=self.__headers,
+                                 proxies=proxies['card'])
+        return re.findall("showMsg\('(.*?)'\)", response.text)[0]
+
+    # 登录校园网关，如果登录成功，返回ip 
+
+def get_songs(self, query, offset=0, count=DEFAULT_QUERY_NUM):
+        if not query or len(query) == 0:
+            return [], 0
+        search_url = "https://music.163.com/weapi/cloudsearch/get/web"
+        raw_data = {
+            "csrf_token": "",
+            "hlposttag": "</span>",
+            "hlpretag": "<span class=\"s-fc7\">",
+            # 最大为100
+            "limit": "%s" % (count if count else NeteaseSongSpider.DEFAULT_QUERY_NUM),
+            "offset": "%s" % offset,
+            "s": query,
+            "total": "true",
+            "type": "1"
+        }
+        post_data = get_encrypted_post_data(raw_data)
+
+        resp = requests.post(search_url, data=post_data, headers=self.headers)
+        json = resp.json()
+        result = []
+        total_count = 0
+
+        if "result" not in json or not json["result"] or "songs" not in json["result"]:
+            return result, total_count
+
+        for json_song in json["result"]["songs"]:
+            result.append(parse_song(json_song))
+
+        if "songCount" in json["result"]:
+            total_count = json["result"]["songCount"]
+
+        return result, total_count 
+
+def _get_song_url(self, song):
+        url = "https://music.163.com/weapi/song/enhance/player/url"
+        raw_data = {
+            # "br": 128000,
+            "br": 320000,   # 比特率
+            "csrf_token": "",
+            "ids": "[%s]" % song.id
+        }
+        post_data = get_encrypted_post_data(raw_data)
+        r = requests.post(url, data=post_data, headers=self.headers)
+        json_data = r.json()
+        song_url = json_data["data"][0]["url"]
+
+        return song_url 
+
+def sendSignedPostRequest(self, uri, data):
+        r = requests.post(self.endpoint + uri, json=data, auth=self.auth)
+        return r.json() 
+
+def token(self):
+        """Cached authentication token"""
+        if not self._token:
+            self._token = requests.post(self.url,
+                json.dumps({'id': 1, 'method': 'Authenticate', 
+                    'params': {'API': 1, 'Password': self.password}, 
+                    'jsonrpc': '2.0'}),
+                verify=False).json()["result"]["Token"]
+        return self._token 
+
+def request(self, method, params):
+        """Execute authenticated request"""
+        return requests.post(self.url, 
+            json.dumps({'id': 1, 'method': method, 'params': params, 
+                'jsonrpc': '2.0', 'Token': self.token}),
+            verify=False
+        ).json() 
+
+def data_Crawling(from_h,to_h,date_h,i_orgcity, i_dstCity):
+    url = 'http://www.ceair.com/otabooking/flight-search!doFlightSearch.shtml?rand=0.9983412510479111'
+    data ='searchCond={"tripType":"OW","adtCount":1,"chdCount":0,"infCount":0,"currency":"CNY","sortType":"a","segmentList":[{"deptCd":"'+from_h+'","arrCd":"'+to_h+'","deptDt":"'+date_h+'","deptCdTxt":"'+i_orgcity+'","arrCdTxt":"'+i_dstCity+'","deptCityCode":"'+from_h+'","arrCityCode":"'+to_h+'"}],"sortExec":"a","page":"0"}'
+    try:
+        resp1 = requests.post(url,data = data,headers = headers,timeout = 15)
+        return resp1.text,resp1.status_code
+    except requests.exceptions.ReadTimeout:
+        return -1,-1
+    except requests.exceptions.ConnectionError:
+        return -2,-2
+# 解析数据 
+
+def data_Crawling(from_h,to_h,date_h,i_orgcity, i_dstCity):
+    url = 'http://www.ceair.com/otabooking/flight-search!doFlightSearch.shtml?rand=0.9983412510479111'
+    data ='searchCond={"tripType":"OW","adtCount":1,"chdCount":0,"infCount":0,"currency":"CNY","sortType":"a","segmentList":[{"deptCd":"'+from_h+'","arrCd":"'+to_h+'","deptDt":"'+date_h+'","deptCdTxt":"'+i_orgcity+'","arrCdTxt":"'+i_dstCity+'","deptCityCode":"'+from_h+'","arrCityCode":"'+to_h+'"}],"sortExec":"a","page":"0"}'
+    try:
+        resp1 = requests.post(url,data = data,headers = headers,timeout = 15)
+        return resp1.text,resp1.status_code
+    except requests.exceptions.ReadTimeout:
+        return -1,-1
+    except requests.exceptions.ConnectionError:
+        return -2,-2
+# 解析数据 
+
+def post_annotation(annotation, api_key):
+    ''' Takes annotation dict and api_key string'''
+    base_url = 'https://api.circonus.com/v2'
+    anootate_post_endpoint = '/annotation'
+    resp = requests.post(base_url + anootate_post_endpoint,
+                         headers=build_headers(api_key), data=json.dumps(annotation))
+    resp.raise_for_status()
+    return resp 
+
+def import_file(xapi, module, ip_address, file_, category):
+    xapi.keygen()
+
+    params = {
+        'type': 'import',
+        'category': category,
+        'key': xapi.api_key
+    }
+
+    filename = os.path.basename(file_)
+
+    mef = requests_toolbelt.MultipartEncoder(
+        fields={
+            'file': (filename, open(file_, 'rb'), 'application/octet-stream')
+        }
+    )
+
+    r = requests.post(
+        'https://' + ip_address + '/api/',
+        verify=False,
+        params=params,
+        headers={'Content-Type': mef.content_type},
+        data=mef
+    )
+
+    # if something goes wrong just raise an exception
+    r.raise_for_status()
+
+    resp = xml.etree.ElementTree.fromstring(r.content)
+
+    if resp.attrib['status'] == 'error':
+        module.fail_json(msg=r.content)
+
+    return True, filename 
+
+def getGlucoseDex():
+	# Get most recent glucose from Dexcom Share
+	# Code adapted from the Share to Nightscout bridge, via @bewest and @shanselman
+	# https://github.com/bewest/share2nightscout-bridge
+	# Login and get a Dexcom Share session ID
+	# ... need to only do this once and then refresh the sessionID as necessary
+	dexLoginURL = "https://share1.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName"
+	dexLoginPayload = {
+            "User-Agent": "Dexcom Share/3.0.2.11 CFNetwork/711.2.23 Darwin/14.0.0",
+            "applicationId": "d89443d2-327c-4a6f-89e5-496bbb0317db",
+            "accountName": dexUsername,
+            "password": dexPassword,
+        }
+	dexLoginHeaders = {
+	    'content-type': "application/json",
+	    'accept': "application/json",
+	    }
+	dexLoginResponse = requests.post(dexLoginURL, json=dexLoginPayload, headers=dexLoginHeaders)
+	sessionID = dexLoginResponse.json()
+	# Use the session ID to retrieve the latest glucose record
+	dexGlucoseURL = "https://share1.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues"
+	dexGlucoseQueryString = {"sessionID":sessionID,"minutes":"1440","maxCount":"1"}
+	dexGlucoseHeaders = {
+	    'content-type': "application/json",
+	    'accept': "application/json",
+	    }
+	dexGlucoseResponse = requests.post(dexGlucoseURL, headers=dexGlucoseHeaders, params=dexGlucoseQueryString)
+	dexGlucoseResponseJSON = dexGlucoseResponse.json()
+	dexGlucose = dexGlucoseResponseJSON[0]["Value"]
+	dexGlucoseEpochString = dexGlucoseResponseJSON[0]["ST"]
+	dexGlucoseEpoch = int(re.match('/Date\((\d+)\)/', dexGlucoseEpochString).group(1))/1e3
+	dexGlucoseTimestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(dexGlucoseEpoch))
+	print("Current Glucose (Share):      " + str(dexGlucose) + " " + glucoseUnit + " at " + time.strftime("%-I:%M:%S %p on %A, %B %d, %Y",time.localtime(dexGlucoseEpoch)))
+	return dexGlucose 
+
+def factory_list(token, body = dict(misc.CRF_BODY)):
+    '''(str [, dict]) ->  list of dict
+    token: "Token" value in the .auth.fj_login(username, password) dict
+    body: search parameters in the format of .misc.CRF_BODY
+
+    returns a list of robots per the request parameters'''
+
+    url = r'https://factory.robocraftgame.com/api/roboShopItems/list'
+    headers = misc.make_headers(token)
+    response = requests.post(url, json=body, headers=headers)
+    return response.json()['response']['roboShopItems'] 
+
+def getNote(self,gid, commentLimit, likeLimit):
+        header = {
+            "Content-Type" : "application/json",
+            "X-Line-Mid" : self.mid,
+            "x-lct": self.channel_access_token,
+
+        }
+        r = requests.get(
+            "http://" + self.host + "/mh/api/v27/post/list.json?homeId=" + gid + "&commentLimit=" + commentLimit + "&sourceType=TALKROOM&likeLimit=" + likeLimit,
+            headers = header
+        )
+        return r.json() 
+
+def getHome(self,mid):
+        header = {
+                    "Content-Type": "application/json",
+                    "User-Agent" : self.UA,
+                    "X-Line-Mid" : self.mid,
+                    "x-lct" : self.channel_access_token,
+        }
+
+        r = requests.get(
+        "http://" + self.host + "/mh/api/v27/post/list.json?homeId=" + mid + "&commentLimit=2&sourceType=LINE_PROFILE_COVER&likeLimit=6",
+        headers = header
+        )
+        return r.json() 
+
+def main():
+   # credentials
+   dfcreds = get_credentials(keyfile) # get the authentication information from the keyfile
+   headers = {'content-type': 'application/json', 'HLIAMKey': dfcreds['key']}
+   
+   # Viewable Communities
+   rViewableCommunities = requests.get(repo_path + 'api/v2.0/Communities/GetViewableCommunities', headers=headers)
+   dfViewableCommunities = pd.read_json(rViewableCommunities.content)
+
+   # Community Members
+   payload = {
+           "CommunityKey": 'd06df790-8ca4-4e54-91a0-244af0228ddc',
+           "StartRecord": 1,
+           "EndRecord": 1500
+           }
+   rCommunityMembers = requests.post(repo_path + 'api/v2.0/Communities/GetCommunityMembers', headers=headers, json=payload)
+   dfCommunityMembers = pd.read_json(rCommunityMembers.content)
+   # add a timestamp to the data
+   dfCommunityMembers['cmtimestamp'] = dt.datetime.now()
+   dfCommunityMembers.index.names = ['rowUID']
+   dfCommunityMembers.drop('Community', 1, inplace=True) #remove the nested dictionary of community information
+   dfCommunityMembers.to_csv(file_path + 'techsup_hl_communitymembers.csv', index=False, date_format="%Y-%m-%d")
+
+   # Discussion Posts
+   rDiscussionPosts = requests.get(repo_path + 'api/v2.0/Discussions/GetDiscussionPosts?maxToRetrieve=5000', headers=headers)
+   dfDiscussionPosts = pd.read_json(rDiscussionPosts.content)
+   # add a timestamp to the data
+   dfDiscussionPosts['dptimestamp'] = dt.datetime.now()
+   dfDiscussionPosts.to_csv(file_path + 'techsup_hl_discussionposts.csv', index=False, date_format="%Y-%m-%d") 
+
+def send_to_rapidpro(msg = {}):
+    '''sends a given message to the RapidPro server'''
+
+    try:
+        #if there is a keyword in the message, just remove it before forwarding to RapidPro
+        keyword = KANNEL_SERVERS[msg['host']]['keyword']
+        logger.debug("The server %s use the keyword %s", msg['host'], keyword)
+
+        if keyword is not None:
+            text = msg['text'].split()
+            if text[0].upper() == keyword.upper(): #match using the same case
+                logger.debug("Removing keyword %s from the message %s", keyword, msg['text'])
+                msg['text'] = " ".join(text[1:]) #remove the keyword from the message and reconstruct the SMS
+
+        url = RAPIDPRO_URLS['RECEIVED']
+
+        data = { #the data to be sent in the body of the request
+                'from'  : msg['from'],
+                'text'  : msg['text'],
+        }
+        r = post(url=url, data = data)
+        logger.debug("Sending request to RapidPro server at %s", r.url)
+        logger.debug("Data inside request to RapidPro server is %s", r.request.body)
+        logger.debug("The response we got from RapidPro is %s", r.text)
+
+        r.raise_for_status() #Will raise an exception with the HTTP code ONLY IF the HTTP status was NOT 200
+        return True
+    except Exception as e:
+        logger.debug("Exception %s occurred", e)
+        raise e 
+
+def upload_file(self, filetosubmit, vmprofile=1):
+        '''
+        Description: Upload procedure, uploads a file to the ATD server for inspection
+        Input:
+                 filetosubmit:  Path to the file to be submitted
+                 vmProfileList: ATD Profile ID for inspection
+
+        Output:      Two possible values:
+
+                 (0, error_info): Unsucessful procedure
+                 (1, {'jobID':'xxx','taskId':'xxx','file':'xxx','md5':'xxx','size':'xxx':'mimeType':'xxx'}): Sucessful upload
+        '''
+
+        url = 'https://%s/php/fileupload.php' % self.atdserver
+
+        payload = {"data": {"vmProfileList": vmprofile, "submitType": 0}, "amas_filename": self.get_filename(filetosubmit)}
+
+        data = json.dumps(payload)
+
+        try:
+            files = {'amas_filename': (self.get_filename(filetosubmit), open(filetosubmit, 'rb'))}
+        except Exception as e:
+            error_info = 'Upload method: Error opening file: %s' % e
+            return(0, error_info)
+
+        custom_header = {
+            'Accept': 'application/vnd.ve.v1.0+json',
+            'VE-SDK-API': '%s' % self.b64(self.session, self.userId),
+            'accept-encoding': 'gzip;q=0,deflate,sdch'
+        }
+
+        try:
+            r = requests.post(url, headers=custom_header, files=files, data={'data': data}, verify=False)
+
+        except Exception as e:
+            error_info = 'Error submitting file to ATD:\n%s' % e
+            return(0, error_info)
+
+        if r.status_code == 200:
+            server_info = json.loads(r.content)
+            if server_info['success'] is True:
+                info = {
+                    'jobId': server_info['subId'],
+                    'taskId': server_info['results'][0]['taskId'],
+                    'file': server_info['results'][0]['file'],
+                    'md5': server_info['results'][0]['md5'],
+                    'size': server_info['results'][0]['size'],
+                    'mimeType': server_info['mimeType']
+                }
+                return (1, info)
+            else:
+                error_info = 'Upload operation did not return a success value'
+                return (0, error_info)
+        else:
+            error_info = 'Error uploading file, bad credentials or header - status code: %d' % r.status_code
+            return (0, error_info) 
+
+def _get_data(self):
+        conf = get_config()
+        try:
+            res = requests.post('https://www.yr.no/place/%s/%s/%s/forecast.xml'
+                                % (conf['api']['yrno']['country'], conf['api']['yrno']['province'], conf['api']['yrno']['city']))
+        except RequestException or HTTPError:  # retry on error
+            logger.error("Caught RequestException")
+            res = requests.post('https://www.yr.no/place/%s/%s/%s/forecast.xml'
+                                % (conf['api']['yrno']['country'], conf['api']['yrno']['province'], conf['api']['yrno']['city']))
+        res.raise_for_status()
+        root = ET.fromstring(res.text)
+
+        # filter data and parse to weather dict
+        legal_xml = root.find('credit').find('link')
+        location_xml = root.find('location')
+        sun_xml = root.find('sun')
+        weather_data = {
+            'credit': {
+                "text": legal_xml.get('text'),
+                "url": legal_xml.get('url')
+            },
+            'city': location_xml.find('name').text,
+            'country': location_xml.find('country').text,
+            'lastUpdate': time.strptime(root.find('meta').find('lastupdate').text, time_format_str),
+            'sun': {
+                "rise": time.strptime(sun_xml.get('rise'), time_format_str),
+                "set": time.strptime(sun_xml.get('set'), time_format_str)
+            },
+            "forecast": []
+        }
+        tabular_xml = root.find('forecast').find('tabular')
+        for time_xml in tabular_xml.findall('time'):
+            symbol_xml = time_xml.find('symbol')
+            wind_xml = time_xml.find('windSpeed')
+            weather_data['forecast'].append({
+                'time': {
+                    "from": time.strptime(time_xml.get('from'), time_format_str),
+                    "to": time.strptime(time_xml.get('to'), time_format_str)
+                },
+                'symbol': {
+                    "id": symbol_xml.get('number'),
+                    "description": symbol_xml.get('name')
+                },
+                'precipitation': time_xml.find('precipitation').get('value'),
+                'wind': {
+                    "direction": time_xml.find('windDirection').get('code'),
+                    "mps": wind_xml.get('mps'),
+                    "description": wind_xml.get('name')
+                },
+                "celsius": time_xml.find('temperature').get('value')
+            })
+
+        logger.info("retrieved data: %s" % weather_data)
+        self.data = weather_data 
+
+def upload_file(body, fileName, contentType, contentLength):
+
+    # 1. GET FILE STORAGE URI
+    fileUploadPartsResponse = requests.post(fileUploadRequestURI, 
+        headers={
+            'Authorization': iotHubSasToken,
+            'Content-Type': 'application/json'
+        },
+        data = '{ "blobName": "%s"}' % (fileName)
+    )
+
+    print(fileUploadRequestURI)
+    print(fileUploadPartsResponse.status_code)
+    print(fileUploadPartsResponse.text)
+
+    if fileUploadPartsResponse.status_code == 200:
+ 
+        fileUploadParts = fileUploadPartsResponse.json()
+        fileUploadURI = fileUploadURITemplate % (fileUploadParts["hostName"], fileUploadParts["containerName"], fileUploadParts["blobName"], fileUploadParts["sasToken"])
+        
+        # 2. UPLOAD FILE TO BLOB STORAGE
+        uploadResponse = requests.put(fileUploadURI, 
+            headers={
+                'Content-Type': contentType,
+                'Content-Length': contentLength,
+                'x-ms-blob-type': 'BlockBlob',
+                
+            },
+            data = body
+        )
+
+        print(fileUploadURI)
+        print(uploadResponse.status_code)
+        print(uploadResponse.text)
+        
+        if uploadResponse.status_code == 201:
+
+            # 3. GET UPLOAD FILE NOTIFICATION
+            notificationResponse = requests.post(notificationURI, 
+                headers={
+                    'Authorization': iotHubSasToken,
+                    'Content-Type': 'application/json'
+                },
+                data = '{"correlationId": "%s" }' % (fileUploadParts["correlationId"])
+            )
+    
+            print(notificationURI)
+            print(notificationResponse.status_code)
+            print(notificationResponse.text) 
+
+def test_binary_classifier(self):
+        from keras.wrappers.scikit_learn import KerasClassifier
+        from sklearn.pipeline import Pipeline
+        from sklearn.datasets import load_breast_cancer
+        from sklearn import preprocessing
+        from pandas import DataFrame
+        from numpy import array
+        from os import system
+        from pandas import read_json
+        from requests import post
+
+        breast_cancer = load_breast_cancer()
+        input_df = DataFrame(data=breast_cancer['data'], columns=breast_cancer['feature_names'])
+        model = Pipeline([
+            ('rescale', preprocessing.StandardScaler()),
+            ('min_max', preprocessing.MinMaxScaler((-1, 1,))),
+            ('nn', KerasClassifier(build_fn=self.create_binary_classification_model, epochs=1, verbose=1)),
+        ])
+        X, Y = input_df.values, array(breast_cancer['target'])
+        model.fit(X, Y)
+
+        # convert classifier to Docker container
+        from sklearn2docker.constructor import Sklearn2Docker
+        s2d = Sklearn2Docker(
+            classifier=model,
+            feature_names=list(input_df),
+            class_names=breast_cancer['target_names'].tolist(),
+        )
+        s2d.save(
+            name="classifier",
+            tag="keras",
+        )
+
+        # # run your Docker container as a detached process
+        system("docker run -d -p {}:5000 --name {} classifier:keras && sleep 5".format(self.port, self.container_name))
+
+        # send your training data as a json string
+        request = post("http://localhost:{}/predict/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(len(list(result)), 1)
+        self.assertEqual(len(result), len(input_df))
+
+        request = post("http://localhost:{}/predict_proba/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(len(list(result)), 1)
+        self.assertEqual(len(result), len(input_df)) 
+
+def test_categorical_classifier(self):
+        from keras.wrappers.scikit_learn import KerasClassifier
+        from sklearn.pipeline import Pipeline
+        from sklearn.datasets import load_iris
+        from sklearn import preprocessing
+        from pandas import DataFrame
+        from numpy import array
+        from os import system
+        from pandas import read_json
+        from requests import post
+
+        iris = load_iris()
+        input_df = DataFrame(data=iris['data'], columns=iris['feature_names'])
+        model = Pipeline([
+            ('rescale', preprocessing.StandardScaler()),
+            ('min_max', preprocessing.MinMaxScaler((-1, 1,))),
+            ('nn', KerasClassifier(build_fn=self.create_categorical_classification_model, epochs=1, verbose=1)),
+        ])
+        X, Y = input_df.values, array(iris['target'])
+        model.fit(X, Y)
+
+        # convert classifier to Docker container
+        from sklearn2docker.constructor import Sklearn2Docker
+        s2d = Sklearn2Docker(
+            classifier=model,
+            feature_names=list(input_df),
+            class_names=iris['target_names'].tolist(),
+        )
+        s2d.save(
+            name="classifier",
+            tag="keras",
+        )
+
+        # # run your Docker container as a detached process
+        system("docker run -d -p {}:5000 --name {} classifier:keras && sleep 5".format(self.port, self.container_name))
+
+        # send your training data as a json string
+        request = post("http://localhost:{}/predict/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(len(list(result)), 1)
+        self.assertEqual(len(result), len(input_df))
+
+        request = post("http://localhost:{}/predict_proba/split".format(self.port), json=input_df.to_json(orient="split"))
+        result = read_json(request.content.decode(), orient="split")
+        self.assertEqual(len(list(result)), 3)
+        self.assertEqual(len(result), len(input_df)) 
+
+def get_course_by_aao(self, semester):
+        # 如果还没有登录新教务处则登录
+        if self.aao_cookies == None:
+            self.__aao_login()
+        post_data = {
+            'ignoreHead': '1',
+            'showPrintAndExport': '1',
+            'setting.kind': 'std',
+            'startWeek': '',
+            'project.id': '1',
+            'semester.id': semester,
+            'ids': '46600'
+        }
+
+        course_data = requests.post("http://219.216.96.4/eams/courseTableForStd!courseTable.action",
+                                    data=post_data,
+                                    headers=self.__headers,
+                                    cookies=self.aao_cookies,
+                                    proxies=proxies['aao'])
+        teachers = re.findall('var teachers = \[{id:.*?,name:"(.*?)",lab:false}\];', course_data.text)
+        course_names = re.findall('actTeacherName.join\(\',\'\),".*?","(.*?)"', course_data.text)
+        course_classroom = re.findall('actTeacherName.join\(\',\'\),".*?",".*?",".*?","(.*?)"', course_data.text)
+        course_weeks_str = re.findall('actTeacherName.join\(\',\'\),".*?",".*?",".*?",".*?","(.*?)"', course_data.text)
+        course_class = re.findall('activity = new TaskActivity([\s\S]*?)var teachers', course_data.text)
+        course_class = course_class + re.findall('activity = new TaskActivity([\s\S]*?)table0.marshalTable',
+                                                 course_data.text)
+        course_info = re.findall(
+            '<td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>[\s\S]*?<a href=".*?" onclick=".*?" title="点击显示单个教学任务具体安排">.*?</a>[\s\S]*?</td><td>(.*?)</td><td>',
+            course_data.text)
+
+        for count in range(0, len(course_class)):
+            day = re.findall('index =(\d+)\*unitCount\+\d+', course_class[count])
+            class_num = re.findall('index =\d+\*unitCount\+(\d+)', course_class[count])
+            this_course = []
+            for cour in range(0, len(day)):
+                this_course.append({'day': int(day[cour]), 'class_num': int(class_num[cour])})
+            course_class[count] = this_course
+
+        res = [
+            {
+                'teacher': teachers[i],
+                'name': course_names[i],
+                'classroom': course_classroom[i],
+                'weeks': self.__week_num(course_weeks_str[i]),
+                'time': course_class[i]
+            }
+            for i in range(0, len(teachers))
+        ]
+        info = [
+            {
+                'course_code': i[0],
+                'course_name': i[1],
+                'course_score': i[2],
+                'course_teacher': i[3]
+            }
+            for i in course_info
+        ]
+
+        return {'table': res, 'info': info}
+
+    # 获取校园卡消费记录 
+
+def get_card_trade(self, start, end):
+        # 如果还没有通过一网通办获取到一卡通的cookies，则获取
+        if self.card_cookies == False:
+            self.__card_login()
+        trade_url = 'http://ecard.neu.edu.cn/selfsearch/User/ConsumeInfo.aspx'
+        page = 1
+        res = []
+        query_page = requests.get('http://ecard.neu.edu.cn/selfsearch/User/ConsumeInfo.aspx',
+                                  cookies=self.card_cookies,
+                                  proxies=proxies['card'])
+        while True:
+            data = {
+                '__EVENTTARGET': 'ctl00$ContentPlaceHolder1$AspNetPager1',
+                '__EVENTARGUMENT': str(page),
+                '__VIEWSTATE':
+                    re.findall('<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE"[\s\S]*?value="(.*?)"',
+                               query_page.text)[0],
+                '__EVENTVALIDATION':
+                    re.findall('<input type="hidden" name="__EVENTVALIDATION" id="__EVENTVALIDATION" value="(.*?)" />',
+                               query_page.text)[0],
+                'ctl00$ContentPlaceHolder1$rbtnType': '0',
+                'ctl00$ContentPlaceHolder1$txtStartDate': start,
+                'ctl00$ContentPlaceHolder1$txtEndDate': end,
+            }
+
+            if page == 1:
+                data['ctl00$ContentPlaceHolder1$btnSearch'] = '查  询'
+                data['__EVENTARGUMENT'] = ''
+
+            query_page = requests.post(trade_url, data=data,
+                                       cookies=self.card_cookies,
+                                       headers=self.__headers,
+                                       proxies=proxies['card'])
+            page_num = re.findall('style="margin-right:5px;">(\d+)</a>', query_page.text)
+            trade_time = re.findall('<span id="Content.*?">(.*?)</span>', query_page.text)
+            trades = re.findall(
+                '</td><td>(.*?)</td><td align="right">(.*?)</td><td align="right">(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td>',
+                query_page.text)
+            for i in range(0, len(trade_time)):
+                if (trade_time[i] == ''):
+                    break
+                append_content = {
+                    'trade_time': trade_time[i],
+                    'trade_type': trades[i][0],
+                    'trade_cost': trades[i][1],
+                    'remaind': trades[i][2],
+                    'salesman': trades[i][3],
+                    'place': trades[i][4],
+                    'terminal': trades[i][5]
+                }
+                res.append(append_content)
+            if 1 - (str(page + 1) in page_num):
+                break
+            page += 1
+        return res
+
+    # 门禁记录，start与end格式为都如2019-05-18这样 
+
+def sendSignedPostRequest(self, uri, postData):
+        signature = hmac.new(self.secret, msg=uri+postData, digestmod=hashlib.sha512).digest().encode("hex")
+        r = requests.post(self.endpoint + uri, headers={"X-Signature": signature}, data=postData)
+        #print r, r.text, r.json()
+        return r.json() 
+
+def createAlbum2(self,gid,name,path,oid):
+        header = {
+                    "Content-Type": "application/json",
+                    "User-Agent" : self.UA,
+                    "X-Line-Mid" : self.mid,
+                    "x-lct" : self.channel_access_token,
+        }
+        payload = {
+                "type" : "image",
+                "title" : name
+        }
+        r = requests.post(
+            "http://" + self.host + "/mh/album/v3/album?count=1&auto=0&homeId=" + gid,
+            headers = header,
+            data = json.dumps(payload)
+        )
+        #albumId = r.json()["result"]["items"][0]["id"]
+
+
+        #h = {
+        #            "Content-Type": "application/x-www-form-urlencoded",
+        #            "User-Agent" : self.UA,
+        #            "X-Line-Mid" : gid,
+        #            "X-Line-Album" : albumId,
+        #            "x-lct" : self.channel_access_token,
+                    #"x-obs-host" : "obs-jp.line-apps.com:443",
+
+        #}
+        #print r.json()
+        #files = {
+        #    'file': open(path, 'rb'),
+        #}
+        #p = {
+        #    "userid" : gid,
+        #    "type" : "image",
+        #    "oid" : oid,
+        #    "ver" : "1.0"
+        #}
+        #data = {
+        #    'params': json.dumps(p)
+        #}
+        #r = requests.post(
+        #"http://obs-jp.line-apps.com/oa/album/a/object_info.nhn:443",
+        #headers = h,
+        #data = data,
+        #files = files
+        #)
+        return r.json()
+        #cl.createAlbum("cea9d61ba824e937aaf91637991ac934b","ss3ai","kawamuki.png") 
+
