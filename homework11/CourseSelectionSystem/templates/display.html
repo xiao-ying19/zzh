@@ -1,0 +1,97 @@
+<head><script src="../static/js/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="../static/css/style1.css" type="text/css">
+    <link rel="stylesheet" href="../static/css/style5.css" type="text/css">
+</head>
+<body>
+
+{% block newcontent %}
+
+
+<table width="99%" align="center" border="0">
+    <Tr>
+    <Td height="49">
+      <Div align="center"><Font color="#009900" size="7" face="华文新魏">课 程 表</Font></Div></Td>
+  </Tr>
+    <tr>
+        <Td height="100">
+      <Table id="oTable" width="100%" height="90"  border="1" bordercolor="#0000FF">
+        <Tr>
+          <Td width="8%" height="38">
+			 <Div align="center">
+				<Font color="#CC6600" size="4" face="华文隶书">课程号</Font>
+			</Div>
+		  </Td>
+          <Td width="20%">
+			<Div align="center">
+				<Font color="#CC6600" size="4" face="华文隶书">课程名称</Font>
+			</Div>
+		  </Td>
+           <Td width="7%">
+			<Div align="center">
+				<Font color="#CC6600" size="4" face="华文隶书">教师</Font>
+			</Div>
+		  </Td>
+          <Td width="9%">
+			<Div align="center">
+				<Font color="#CC6600" size="4" face="华文隶书">上课时间</Font>
+			</Div>
+		  </Td>
+    </tr>
+    {% for course in finalList %}
+    <tr>
+        <td>{{ course.classID }}</td>
+        <td>{{ course.classname }}</td>
+        <td>{{course.name }}</td>
+        <td>{{ course.time }}</td>
+    </tr>
+    {% endfor %}
+          </Table>
+</table>
+{% endblock %}
+
+<br>
+<td>
+     <div align="center">
+     {% for msg in get_flashed_messages()%}
+        <p>{{msg}}</p>
+        {% endfor %}
+
+    {% if message %} {{message}} {% endif %}
+    <form method="POST">
+
+        <br>
+        <br>
+        <a href="{{url_for('middle')}}">返回</a>
+    </form>
+</div>
+    </td>
+
+<script>
+        var oTable = document.getElementById('oTable');
+        for (i=1;i<oTable.rows.length;i++){
+            oTable.rows[i].onmouseover=function(){this.bgColor="#addd";};
+            oTable.rows[i].onmouseout=function(){this.bgColor="#F8F8FF"}
+        }
+    </script>
+<script runat="server" >
+        var oTable = document.getElementById('oTable');
+        for (i=1;i<oTable.rows.length;i++){
+            oTable.rows[i].onclick=function(){
+                var id = this.cells[0].innerHTML;
+                var  info =[{"classID":id}];
+                $.ajax({
+                    type:'POST',
+                    data:JSON.stringify(info),
+                    contentType:'application/json',
+                    dataType:'json',
+                    url:''
+
+                });
+
+            };
+        }
+
+    </script>
+
+</body>
+

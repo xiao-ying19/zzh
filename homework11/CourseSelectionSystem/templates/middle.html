@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+     <link rel="stylesheet" href="../static/css/style3.css" type="text/css">
+</head>
+<body>
+<div class="demo">
+{% for msg in get_flashed_messages() %}
+<p>{{msg}}</p>
+{% endfor %}
+<div align="center">
+    <p><font color="#9900FF" size="7" face="华文新魏">请选择要实现<font color="#9900CC">的功能</font></font></p>
+        <hr size="10" color="#FF0000">
+        <p><font color="#0000FF" size="7" face="华文新魏"></font></p>
+    {% if message %} {{message}} {% endif %}
+</div>
+<div align="center">
+<a class="a1" href="{{ url_for('courseslist') }}">选课</a>
+<br>
+<a class="a1" href="{{url_for('display')}}">查看课程表</a>
+<br>
+<a class="a1" href="{{url_for('index')}}">退出</a>
+</div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  <title>Document</title>
+    <link rel="stylesheet" href="../static/css/style1.css" type="text/css">
+</head>
+<body>
+<div class="demo">
+<td>
+
+<tr>
+<td height="48">
+<div align="center">
+    <p><font color="#9900FF" size="7" face="华文新魏">欢迎来到<font color="#9900CC">选课系统</font></font></p>
+        <hr size="10" color="#FF0000">
+        <p><font color="#0000FF" size="7" face="华文新魏"></font></p>
+    {% if message %} {{message}} {% endif %}
+</div></tr></td>
+<p>
+    <div align="center">
+    <br><br><br>
+<a class="a1" href="{{ url_for('login1') }}">教师登录</a>
+<br>
+<a class="a1" href="{{url_for('login')}}">学生登录</a>
+    </div>
+</p>
+    </div>
+</body>
+</html>
+

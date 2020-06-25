@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+     <link rel="stylesheet" href="../static/css/style4.css" type="text/css">
+</head>
+<body>
+<div class="demo">
+<table width="98%" height="215" border="0">
+  <tr>
+    <td height="48"><div align="center">
+        <p>&nbsp;</p>
+        <p><font color="#9900FF" size="7" face="华文新魏">输入课程<font color="#9900CC">信息</font></font></p>
+        <hr size="10" color="#FF0000">
+        <p><font color="#0000FF" size="7" face="华文新魏"></font></p>
+      </div></td>
+  </tr>
+    <tr>
+        <td>
+<div align="center">
+    {% for msg in get_flashed_messages()%}
+        <p>{{msg}}</p>
+        {% endfor %}
+    {% if message %} {{message}} {% endif %}
+    <form method="POST">
+        <p><font color="#9900FF" size="5" face="华文新魏">课程<font color="#9900CC">号</font></font>
+        <input type="text" name="classID" placeholder="课程号">
+        </p>
+        <br>
+        <p><font color="#9900FF" size="5" face="华文新魏">课程<font color="#9900CC">名称</font></font>
+        <input type="text" name="classname" placeholder="课程名称">
+        </p>
+        <br>
+        <label for="time"><font color="#9900FF" size="5" face="华文新魏">上课<font color="#9900CC">时间</font></font></label>
+        <select name="time" id="time" >
+            <option value="1.56" >周一下午五六节 </option>
+            <option value="1.78">周一下午七八节</option>
+            <option value="2.56">周二下午五六节</option>
+            <option value="2.78">周二下午七八节</option>
+            <option value="3.56">周三下午五六节</option>
+            <option value="3.78">周三下午七八节</option>
+            <option value="4.56">周四下午五六节</option>
+            <option value="4.78">周四下午七八节</option>
+            <option value="5.56">周五下午五六节</option>
+            <option value="5.78">周五下午七八节</option>
+        </select>
+        <br>
+        <br>
+        <input type="submit" value="添加课程">
+        <br>
+        <br>
+<a href="{{url_for('index')}}">退出</a>
+    </form>
+</div>
+    </td>
+    </tr>
+</table>
+    </div>
+</body>
+</html>

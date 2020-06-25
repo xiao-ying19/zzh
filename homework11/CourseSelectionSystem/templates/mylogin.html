@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+     <link rel="stylesheet" href="../static/css/style2.css" type="text/css">
+</head>
+<body>
+<div class="demo">
+<table width="98%" height="215" border="0">
+  <tr>
+    <td height="48"><div align="center">
+        <p>&nbsp;</p>
+        <p><font color="#9900FF" size="7" face="华文新魏">校园网选<font color="#9900CC">课系统</font></font></p>
+        <hr size="10" color="#FF0000">
+        <p><font color="#0000FF" size="7" face="华文新魏"></font></p>
+      </div></td>
+  </tr>
+    <tr>
+        <td>
+<div align="center">
+    {% for msg in get_flashed_messages()%}
+<p>{{msg}}</p>
+{% endfor %}
+<h2><font size="6" face="华文新魏">登陆</font></h2>
+    {% if message %} {{message}} {% endif %}
+    <form method="POST">
+        <p><font color="#9900FF" size="5" face="华文新魏">用户<font color="#9900CC">名</font></font>
+        <input type="text" name="username" placeholder="username">
+        </p>
+        <p><font color="#9900FF" size="5" face="华文新魏">密<font color="#9900CC">码</font></font>
+        <input type="password" name="password" placeholder="password">
+        </p>
+        <input type="submit" value="登录">
+    </form>
+</div>
+    </td>
+    </tr>
+</table>
+    </div>
+</body>
+</html>
